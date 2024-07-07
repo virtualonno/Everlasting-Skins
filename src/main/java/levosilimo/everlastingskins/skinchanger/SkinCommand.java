@@ -187,7 +187,7 @@ public class SkinCommand {
                 packets.add(generatePacket(player, world));
             }
             return packets;
-        }, skinCommandExecutor).orTimeout(10, TimeUnit.SECONDS).whenComplete((result, exception) -> {
+        }, skinCommandExecutor).orTimeout(1, TimeUnit.SECONDS).whenComplete((result, exception) -> {
             if(SkinRestorer.server != null) SkinRestorer.server.execute(() -> result.forEach(EmulateReconnectPacket::emulateReconnect));
         });
         return targets.size();
@@ -222,5 +222,6 @@ public class SkinCommand {
         int yawPacket = Mth.floor(player.getYHeadRot() * 256.0F / 360.0F);
         Set<ClientboundPlayerPositionPacket.RelativeArgument> flags = new HashSet<>();
         return new EmulateReconnectPacket(player, world, x, y, z, yaw, pitch, headYaw, (byte) yawPacket, flags, HeldSlot, abilities, dimensionType, registryKey, seedEncrypted, gameType, previousGameType, isDebug, isFlat);
-    }
+    
+        }
 }
