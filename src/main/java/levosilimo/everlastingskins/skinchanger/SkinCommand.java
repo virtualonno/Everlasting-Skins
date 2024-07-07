@@ -133,24 +133,11 @@ public class SkinCommand {
 
     private static int skinAction(Collection<ServerPlayer> targets, SkinActionType type, boolean setByOperator, SkinVariant variant, boolean withCape, @Nullable String customSource) {
         CompletableFuture<ArrayList<EmulateReconnectPacket>> future = CompletableFuture.supplyAsync(() -> {
-            LanguageEnum a = Config.LANGUAGE.get();
-            switch (a) {
-                case Russian -> {
-                    processing = "§6[EverlastingSkins]§f Обрабатываем...";
-                    changeOP = "§6[EverlastingSkins]§f Оператор изменил ваш скин.";
-                    recon_needed = "§6[EverlastingSkins]§f Скин применён.";
-                }
-                case Ukrainian -> {
-                    processing = "§6[EverlastingSkins]§f Опрацьовуємо...";
-                    changeOP = "§6[EverlastingSkins]§f Оператор змінив ваш скін.";
-                    recon_needed = "§6[EverlastingSkins]§f Скін застосовано.";
-                }
-                default -> {
-                    processing = "§6[EverlastingSkins]§f Processing...";
-                    changeOP = "§6[EverlastingSkins]§f Operator changed your skin.";
-                    recon_needed = "§6[EverlastingSkins]§f Skin has been applied.";
-                }
-            }
+
+                    processing = "§fProcessing your skin...";
+                    changeOP = "§fYour skin has been changed by a Server Operator! Relog for it to take effect.";
+                    recon_needed = "§fYour skin has been changed! Relog for it to take effect.";
+
             if (!setByOperator)
                 targets.stream().findFirst().get().sendSystemMessage(Component.literal(processing));
 
@@ -187,7 +174,7 @@ public class SkinCommand {
                 packets.add(generatePacket(player, world));
             }
             return packets;
-        }, skinCommandExecutor).orTimeout(1, TimeUnit.SECONDS).whenComplete((result, exception) -> {
+        }, skinCommandExecutor).orTimeout(10, TimeUnit.SECONDS).whenComplete((result, exception) -> {
             if(SkinRestorer.server != null) SkinRestorer.server.execute(() -> result.forEach(EmulateReconnectPacket::emulateReconnect));
         });
         return targets.size();
